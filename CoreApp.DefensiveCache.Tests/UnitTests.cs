@@ -1,6 +1,6 @@
 using CoreApp.DefensiveCache.Configuration;
 using CoreApp.DefensiveCache.Extensions;
-using CoreApp.DefensiveCache.Formatters;
+using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Services;
 using CoreApp.DefensiveCache.Templates;
 using CoreApp.DefensiveCache.Tests.Contracts;
@@ -27,8 +27,9 @@ namespace CoreApp.DefensiveCache.Tests
             var configuration = builder.Build();
 
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddSingleton<IConfiguration>(configuration);
-            services.AddSingleton<ICacheFormatter, JsonNetCacheFormatter>();
+            services.AddSingleton<ICacheSerializer, JsonNetCacheSerializer>();
             services.AddDistributedMemoryCache();
 
             _serviceProvider = services.BuildServiceProvider();
@@ -38,10 +39,10 @@ namespace CoreApp.DefensiveCache.Tests
             
             var model = new CacheTemplate();
             model.Name = "ProductRepositoryDynamicCache";
-            model.InterfaceName = "UnitTests.Mocks.IProductRepository";
+            model.InterfaceName = "CoreApp.DefensiveCache.Tests.Contracts.IProductRepository";
             model.AddMethod(new CacheMethodTemplate()
             {
-                ReturnType = "UnitTests.Mocks.Product",
+                ReturnType = "CoreApp.DefensiveCache.Tests.Contracts.Product",
                 Name = "GetProduct",
                 ParametersDeclarations = "System.Int32 id",
                 ParametersNames = "id",
@@ -51,7 +52,7 @@ namespace CoreApp.DefensiveCache.Tests
             });
             model.AddMethod(new CacheMethodTemplate()
             {
-                ReturnType = "System.Threading.Tasks.Task<UnitTests.Mocks.Product>",
+                ReturnType = "System.Threading.Tasks.Task<CoreApp.DefensiveCache.Tests.Contracts.Product>",
                 Name = "GetProductAsync",
                 ParametersDeclarations = "System.Int32 id",
                 ParametersNames = "id",
@@ -68,7 +69,7 @@ namespace CoreApp.DefensiveCache.Tests
             var model = GetCacheTemplate();
             var classFile = TemplateService.Generate(model);
             Assert.Contains("public class ProductRepositoryDynamicCache", classFile);
-            Assert.Contains("public UnitTests.Mocks.Product GetProduct(System.Int32 id)", classFile);
+            Assert.Contains("public CoreApp.DefensiveCache.Tests.Contracts.Product GetProduct(System.Int32 id)", classFile);
         }
 
         [Fact]
@@ -77,7 +78,7 @@ namespace CoreApp.DefensiveCache.Tests
             var model = ReflectionService.GetTemplateModel(typeof(IProductRepository), new InterfaceCacheConfiguration());
             var classFile = TemplateService.Generate(model);
             Assert.Contains("public class IProductRepositoryDynamicCache", classFile);
-            Assert.Contains("public UnitTests.Mocks.Product GetProduct(System.Int32 id)", classFile);
+            Assert.Contains("public CoreApp.DefensiveCache.Tests.Contracts.Product GetProduct(System.Int32 id)", classFile);
         }
 
         [Fact]
@@ -94,7 +95,7 @@ namespace CoreApp.DefensiveCache.Tests
         [Fact]
         public async Task DecorateClassGenerated()
         {
-            var cacheFormatter = _serviceProvider.GetService<ICacheFormatter>();
+            var cacheFormatter = _serviceProvider.GetService<ICacheSerializer>();
             var model = GetCacheTemplate();
             var classFile = TemplateService.Generate(model);
             var assembly = CompilerService.GenerateAssemblyFromCode(typeof(IProductRepository).Assembly, classFile);

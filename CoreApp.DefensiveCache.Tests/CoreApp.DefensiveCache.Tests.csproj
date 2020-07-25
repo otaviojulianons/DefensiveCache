@@ -32,8 +32,6 @@
     <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
     <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Implementations\CoreApp.DefensiveCache.Tests.Implementations.csproj" />
     <ProjectReference Include="..\CoreApp.DefensiveCache\CoreApp.DefensiveCache.csproj" />
-    <ProjectReference Include="..\UnitTests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
-    <ProjectReference Include="..\UnitTests.Implementations\CoreApp.DefensiveCache.Tests.Implementations.csproj" />
   </ItemGroup>
 
 </Project>

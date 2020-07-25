@@ -5,14 +5,14 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
-namespace CoreApp.DefensiveCache.Formatters
+namespace CoreApp.DefensiveCache.Serializers
 {
-    public class BinaryNetCacheFormatter : ICacheFormatter
+    public class BinaryNetCacheSerializer : ICacheSerializer
     {
         private IDistributedCache _distributedCache;
-        private ILogger<BinaryNetCacheFormatter> _logger;
+        private ILogger<BinaryNetCacheSerializer> _logger;
 
-        public BinaryNetCacheFormatter(IDistributedCache distributedCache, ILogger<BinaryNetCacheFormatter> logger)
+        public BinaryNetCacheSerializer(IDistributedCache distributedCache, ILogger<BinaryNetCacheSerializer> logger)
         {
             _distributedCache = distributedCache;
             _logger = logger;

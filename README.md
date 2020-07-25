@@ -6,7 +6,7 @@
             var value = await _distributedCache.GetAsync<Entity>("GetObjectAsync" + id);
             if(value == null)
             {
-                value = await _testRepository.GetObjectAsync(id);
+                value = await _entityRepository.GetObjectAsync(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
                 cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
                 await _distributedCache.SetAsync("GetObjectAsync" + id, value, cacheEntryOptions);
@@ -22,19 +22,24 @@ O DefensiveCache utiliza [__Reflection__](https://docs.microsoft.com/en-us/dotne
 O DefensiveCache está preparado para mapear interfaces que tenham __apenas__ métodos, interfaces com qualquer propriedade __NÃO__ serão mapeadas nessa versão.
 
 ## Como usar
-No Startup da aplicação, realizamos a configuração do serviço de formatação de cache _ICacheFormatter_ e o mapeamento dos métodos de cache. Utilize {chaves} para realizar a interpolação de valores na criação das chaves de cache.
+No Startup da aplicação, realizamos a configuração do serviço de serialização de cache _ICacheSerializer_ e o mapeamento dos métodos de cache. Utilize {chaves} para realizar a interpolação de valores na criação das chaves de cache.
 
 ```csharp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDistributedMemoryCache();
-            services.AddScoped<ICacheFormatter, JsonNetCacheFormatter>();
+            services.AddScoped<ICacheSerializer, JsonNetCacheSerializer>();
             services.DecorateWithCacheGenerated<EnitityRepository>((config) =>
             {
-                config.AddMethod(x => nameof(x.GetObjectAsync), "genGetObjectAsync{id}", 60);
+                config.AddMethod(x => nameof(x.GetObjectAsync), "GetObjectAsync{id}", 60);
             });
         }
 ```
+
+## Extensibilidade
+No momento a biblioteca possui suporte para dois tipos de serialização de cache, para implementar serializadores personalizados, basta implementar a interface _ICacheSerializer_.
+* BinaryNetCacheSerializer - Text/JsonSerializer
+* JsonNetCacheSerializer - Bynary/BinaryFormatter
 
 ## Benchmark
 ``` ini

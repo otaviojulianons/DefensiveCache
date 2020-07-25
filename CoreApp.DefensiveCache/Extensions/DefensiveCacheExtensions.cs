@@ -1,5 +1,5 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
-using CoreApp.DefensiveCache.Formatters;
+using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Proxy;
 using CoreApp.DefensiveCache.Services;
 using Microsoft.Extensions.Configuration;
@@ -82,11 +82,11 @@ namespace CoreApp.DefensiveCache.Extensions
             
             var typeLogger = typeof(ILogger<>).MakeGenericType(typeService);
             var logger = (ILogger)services.GetService(typeLogger);
-            var cacheFormatter = services.GetService<ICacheFormatter>();
+            var cacheSerializer = services.GetService<ICacheSerializer>();
 
             proxy.Decorated = decoratedService;
             proxy.Logger = logger;
-            proxy.CacheFormatter = cacheFormatter;
+            proxy.CacheSerializer = cacheSerializer;
             proxy.RepositoryInterface = repositoryInterface;
             return proxy;
         }

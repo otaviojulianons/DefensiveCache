@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreApp.DefensiveCache.Formatters
+namespace CoreApp.DefensiveCache.Serializers
 {
-    public interface ICacheFormatter
+    public interface ICacheSerializer
     {
         T Get<T>(string key);
 

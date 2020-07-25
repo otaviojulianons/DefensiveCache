@@ -1,6 +1,5 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
-using CoreApp.DefensiveCache.Formatters;
-using Microsoft.Extensions.Caching.Distributed;
+using CoreApp.DefensiveCache.Serializers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace CoreApp.DefensiveCache.Proxy
 
         public ILogger Logger { get; set; }
 
-        public ICacheFormatter CacheFormatter { get; set; }
+        public ICacheSerializer CacheFormatter { get; set; }
 
 
         public InterfaceCacheConfiguration RepositoryInterface { get; set; }

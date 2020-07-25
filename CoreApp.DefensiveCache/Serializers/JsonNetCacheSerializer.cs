@@ -4,14 +4,14 @@ using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CoreApp.DefensiveCache.Formatters
+namespace CoreApp.DefensiveCache.Serializers
 {
-    public class JsonNetCacheFormatter : ICacheFormatter
+    public class JsonNetCacheSerializer : ICacheSerializer
     {
         private IDistributedCache _distributedCache;
-        private ILogger<JsonNetCacheFormatter> _logger;
+        private ILogger<JsonNetCacheSerializer> _logger;
 
-        public JsonNetCacheFormatter(IDistributedCache distributedCache, ILogger<JsonNetCacheFormatter> logger)
+        public JsonNetCacheSerializer(IDistributedCache distributedCache, ILogger<JsonNetCacheSerializer> logger)
         {
             _distributedCache = distributedCache;
             _logger = logger;

@@ -2,7 +2,7 @@
 using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using CoreApp.DefensiveCache.Benchmark.Models;
 using CoreApp.DefensiveCache.Benchmark.Repositories;
-using CoreApp.DefensiveCache.Formatters;
+using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +31,7 @@ namespace CoreApp.DefensiveCache.Benchmark
             var services = new ServiceCollection();
             services.AddLogging(cfg => cfg.AddConsole());
             services.AddSingleton<IConfiguration>(configuration);
-            services.AddScoped<ICacheFormatter, JsonNetCacheFormatter>();
+            services.AddScoped<ICacheSerializer, JsonNetCacheSerializer>();
             services.AddScoped<IDefensiveCacheImplemented, TestRepository1>();
             services.AddScoped<IDefensiveCacheGenerated, TestRepository2>();
             services.AddScoped<IDefensiveCacheDynamicProxy, TestRepository3>();

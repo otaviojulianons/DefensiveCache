@@ -1,10 +1,7 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
-using CoreApp.DefensiveCache.Extensions;
-using CoreApp.DefensiveCache.Formatters;
-using Microsoft.Extensions.Caching.Distributed;
+using CoreApp.DefensiveCache.Serializers;
 using Stubble.Core;
 using Stubble.Core.Builders;
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Reflection;
@@ -26,7 +23,7 @@ namespace CoreApp.DefensiveCache.Proxy
             _args = args;
         }
 
-        public ICacheFormatter CacheFormatter { get; set; }
+        public ICacheSerializer CacheSerializer { get; set; }
 
         public MethodCacheConfiguration CacheConfiguration { get; set; }
 
@@ -51,11 +48,11 @@ namespace CoreApp.DefensiveCache.Proxy
         public T GetValue()
         {
             var cacheKey = GetCacheKey();
-            var cacheValue = CacheFormatter.Get<T>(cacheKey);
+            var cacheValue = CacheSerializer.Get<T>(cacheKey);
             if (Equals(cacheValue, default(T)))
             {
                 cacheValue = GetValueConcrete();
-                CacheFormatter.SetAsync(cacheKey, cacheValue, CacheConfiguration.ExpirationSeconds);
+                CacheSerializer.SetAsync(cacheKey, cacheValue, CacheConfiguration.ExpirationSeconds);
             }
             return cacheValue;
         }
@@ -63,11 +60,11 @@ namespace CoreApp.DefensiveCache.Proxy
         public async Task<T> GetValueAsync()
         {
             var cacheKey = GetCacheKey();
-            var cacheValue = await CacheFormatter.GetAsync<T>(cacheKey);
+            var cacheValue = await CacheSerializer.GetAsync<T>(cacheKey);
             if (Equals(cacheValue, default(T)))
             {
                 cacheValue = await GetValueConcreteAsync();
-                await CacheFormatter.SetAsync(cacheKey, cacheValue, CacheConfiguration.ExpirationSeconds);
+                await CacheSerializer.SetAsync(cacheKey, cacheValue, CacheConfiguration.ExpirationSeconds);
             }
             return cacheValue;
         }
