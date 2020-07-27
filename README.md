@@ -39,7 +39,7 @@ No Startup da aplicação, realizamos a configuração do serviço de serializa�
 ## Extensibilidade
 No momento a biblioteca possui suporte para dois tipos de serialização de cache, para implementar serializadores personalizados, basta implementar a interface _ICacheSerializer_.
 * BinaryNetCacheSerializer - Text/JsonSerializer
-* JsonNetCacheSerializer - Bynary/BinaryFormatter
+* JsonNetCacheSerializer - Binary/BinaryFormatter
 
 ## Benchmark
 ``` ini
