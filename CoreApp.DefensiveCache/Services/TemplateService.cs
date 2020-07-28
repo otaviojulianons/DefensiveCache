@@ -24,6 +24,9 @@ namespace CoreApp.DefensiveCache.Services
 
         public static CacheTemplate GetCacheTemplateFromType(this Type type, InterfaceCacheConfiguration cacheConfiguration)
         {
+            if (!type.IsInterface)
+                throw new Exception("Only service interfaces are allowed for cache code generation.");
+
             var cacheTemplate = new CacheTemplate();
             cacheTemplate.Name = type.Name + "DynamicCache";
             cacheTemplate.InterfaceName = type.FullName;
