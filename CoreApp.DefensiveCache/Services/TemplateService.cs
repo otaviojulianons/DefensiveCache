@@ -27,16 +27,15 @@ namespace CoreApp.DefensiveCache.Services
             if (!type.IsInterface)
                 throw new Exception("Only service interfaces are allowed for cache code generation.");
 
-            var cacheTemplate = new CacheTemplate();
-            cacheTemplate.Name = type.Name + "DynamicCache";
-            cacheTemplate.InterfaceName = type.FullName;
-
+            var cacheTemplate = new CacheTemplate(type);
             foreach (var method in type.GetAllMethods())
             {
                 var methodConfiguration = cacheConfiguration.Methods.FirstOrDefault(x => x.Name == method.Name);
                 var cacheMethod = new CacheMethodTemplate(method, methodConfiguration);
                 cacheTemplate.AddMethod(cacheMethod);
             };
+            foreach (var property in type.GetProperties())
+                cacheTemplate.AddProperty(property);
 
             var methodNamesCacheTemplate = cacheTemplate.Methods.Select(m => m.Name);
             var methodNamesCacheConfiguration = cacheConfiguration.Methods.Select(m => m.Name);

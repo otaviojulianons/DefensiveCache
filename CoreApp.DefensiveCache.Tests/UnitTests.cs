@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -36,30 +37,29 @@ namespace CoreApp.DefensiveCache.Tests
         }
         private CacheTemplate GetCacheTemplate()
         {
-            
-            var model = new CacheTemplate();
-            model.Name = "ProductRepositoryDynamicCache";
-            model.InterfaceName = "CoreApp.DefensiveCache.Tests.Contracts.IProductRepository";
-            model.AddMethod(new CacheMethodTemplate()
+
+            var type = typeof(IProductRepository);
+            var model = new CacheTemplate(type);
+
+            var getProduct = type.GetMethod(nameof(IProductRepository.GetProduct));
+            var getProductAsync = type.GetMethod(nameof(IProductRepository.GetProductAsync));
+
+            var getProductConfig = new MethodCacheConfiguration()
             {
-                ReturnType = "CoreApp.DefensiveCache.Tests.Contracts.Product",
-                Name = "GetProduct",
-                ParametersDeclarations = "System.Int32 id",
-                ParametersNames = "id",
-                Enabled = true,
-                CacheKeyTemplate = "product_{id}",
-                CacheExpirationSeconds = 60
-            });
-            model.AddMethod(new CacheMethodTemplate()
+                Name = getProduct.Name,
+                ExpirationSeconds = 60,
+                KeyTemplate = "product_{id}"
+            };
+            var getProductAsyncConfig = new MethodCacheConfiguration()
             {
-                ReturnType = "System.Threading.Tasks.Task<CoreApp.DefensiveCache.Tests.Contracts.Product>",
-                Name = "GetProductAsync",
-                ParametersDeclarations = "System.Int32 id",
-                ParametersNames = "id",
-                Enabled = false,
-                CacheKeyTemplate = "product_async{id}",
-                CacheExpirationSeconds = 60
-            });
+                Name = getProduct.Name,
+                ExpirationSeconds = 60,
+                KeyTemplate = "product_async_{id}"
+            };
+
+            model.AddMethod(new CacheMethodTemplate(getProduct, getProductConfig));
+            model.AddMethod(new CacheMethodTemplate(getProductAsync, getProductAsyncConfig));
+
             return model;
         }
 
@@ -68,7 +68,7 @@ namespace CoreApp.DefensiveCache.Tests
         {
             var model = GetCacheTemplate();
             var classFile = TemplateService.GenerateCacheCode(model);
-            Assert.Contains("public class ProductRepositoryDynamicCache", classFile);
+            Assert.Contains("public class IProductRepositoryDynamicCache", classFile);
             Assert.Contains("public CoreApp.DefensiveCache.Tests.Contracts.Product GetProduct(System.Int32 id)", classFile);
         }
 

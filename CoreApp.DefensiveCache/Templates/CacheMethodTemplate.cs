@@ -26,15 +26,15 @@ namespace CoreApp.DefensiveCache.Templates
             CacheKeyTemplate = methodConfiguration?.KeyTemplate;
         }
 
-        public bool Async { get; set; }
-        public string ReturnType { get; set; }
-        public string ReturnTypeBase { get; set; }
-        public bool Enabled { get; set; }
-        public string Name { get; set; }
-        public string ParametersDeclarations { get; set; }
-        public string ParametersNames { get; set; }
-        public string CacheKeyTemplate { get; set; }
-        public double CacheExpirationSeconds { get; set; }
+        public bool Async { get; private set; }
+        public string ReturnType { get; private set; }
+        public string ReturnTypeBase { get; private set; }
+        public bool Enabled { get; private set; }
+        public string Name { get; private set; }
+        public string ParametersDeclarations { get; private set; }
+        public string ParametersNames { get; private set; }
+        public string CacheKeyTemplate { get; private set; }
+        public double CacheExpirationSeconds { get; private set; }
         public bool ReturnValue => !string.IsNullOrEmpty(ReturnType);
 
     }
