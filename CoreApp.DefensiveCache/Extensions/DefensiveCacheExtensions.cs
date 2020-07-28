@@ -14,14 +14,14 @@ namespace CoreApp.DefensiveCache.Extensions
 {
     public static class DefensiveCacheExtensions
     {        
-        public static void DecorateWithCacheFromConfiguration(this IServiceCollection services)
+        public static void DecorateWithCacheGeneratedFromConfiguration(this IServiceCollection services)
         {
             var serviceProvider = services.BuildServiceProvider();
             var conf = serviceProvider.GetService<IConfiguration>();
-            var cacheRepositories = conf.GetSection("Cache:Repositories").Get<IEnumerable<InterfaceCacheConfiguration>>();
+            var cacheServices = conf.GetSection("Cache:Services").Get<IEnumerable<InterfaceCacheConfiguration>>();
 
-            foreach (var repository in cacheRepositories)
-                services.DecorateWithCacheConfiguration(repository);
+            foreach (var cacheService in cacheServices)
+                services.DecorateWithCacheConfiguration(cacheService);
         }
 
         public static void DecorateWithCacheGenerated<T>(
@@ -49,10 +49,10 @@ namespace CoreApp.DefensiveCache.Extensions
                 return;
 
             var typeService = serviceMatched.ServiceType;
-            var templateModel = ReflectionService.GetTemplateModel(typeService, cacheConfiguration);
-            var classCode = TemplateService.Generate(templateModel);
-            var assembly = CompilerService.GenerateAssemblyFromCode(typeService.Assembly, classCode);
-            var typeCache = assembly.GetTypes().FirstOrDefault();
+            var cacheTemplate = typeService.GetCacheTemplateFromType(cacheConfiguration);
+            var cacheCode = TemplateService.GenerateCacheCode(cacheTemplate);
+            var assemblyCache = CompilerService.GenerateAssemblyFromCode(typeService.Assembly, cacheTemplate.Name, cacheCode);
+            var typeCache = assemblyCache.GetTypes().FirstOrDefault();
             services.Decorate(typeService, typeCache);
         }
 

@@ -67,7 +67,7 @@ namespace CoreApp.DefensiveCache.Tests
         public void GenerateClassCodeByTemplate()
         {
             var model = GetCacheTemplate();
-            var classFile = TemplateService.Generate(model);
+            var classFile = TemplateService.GenerateCacheCode(model);
             Assert.Contains("public class ProductRepositoryDynamicCache", classFile);
             Assert.Contains("public CoreApp.DefensiveCache.Tests.Contracts.Product GetProduct(System.Int32 id)", classFile);
         }
@@ -75,18 +75,17 @@ namespace CoreApp.DefensiveCache.Tests
         [Fact]
         public void GenerateClassCodeByType()
         {
-            var model = ReflectionService.GetTemplateModel(typeof(IProductRepository), new InterfaceCacheConfiguration());
-            var classFile = TemplateService.Generate(model);
-            Assert.Contains("public class IProductRepositoryDynamicCache", classFile);
-            Assert.Contains("public CoreApp.DefensiveCache.Tests.Contracts.Product GetProduct(System.Int32 id)", classFile);
+            var cacheCode = typeof(IProductRepository).GenerateCacheCodeFromType(new InterfaceCacheConfiguration());
+            Assert.Contains("public class IProductRepositoryDynamicCache", cacheCode);
+            Assert.Contains("public CoreApp.DefensiveCache.Tests.Contracts.Product GetProduct(System.Int32 id)", cacheCode);
         }
 
         [Fact]
         public void CompileClassCodeFromString()
         {
             var model = GetCacheTemplate();
-            var classFile = TemplateService.Generate(model);
-            var assembly = CompilerService.GenerateAssemblyFromCode(typeof(IProductRepository).Assembly , classFile);
+            var classFile = TemplateService.GenerateCacheCode(model);
+            var assembly = CompilerService.GenerateAssemblyFromCode(typeof(IProductRepository).Assembly, model.Name, classFile);
             var type = assembly.GetTypes().FirstOrDefault();
             Assert.Contains(model.Name, assembly.GetTypes().Select(x => x.Name));
         }
@@ -97,8 +96,8 @@ namespace CoreApp.DefensiveCache.Tests
         {
             var cacheFormatter = _serviceProvider.GetService<ICacheSerializer>();
             var model = GetCacheTemplate();
-            var classFile = TemplateService.Generate(model);
-            var assembly = CompilerService.GenerateAssemblyFromCode(typeof(IProductRepository).Assembly, classFile);
+            var classFile = TemplateService.GenerateCacheCode(model);
+            var assembly = CompilerService.GenerateAssemblyFromCode(typeof(IProductRepository).Assembly, model.Name, classFile);
             var type = assembly.GetTypes().FirstOrDefault();
 
             var concreteRepository = new ProductRepository();

@@ -4,6 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>CoreApp.DefensiveCache</RootNamespace>
     <AssemblyName>CoreApp.DefensiveCache</AssemblyName>
+    <Authors>Otávio JNS</Authors>
+    <Company>CoreApp</Company>
   </PropertyGroup>
 
   <ItemGroup>

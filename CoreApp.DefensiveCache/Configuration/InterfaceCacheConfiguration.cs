@@ -4,11 +4,14 @@ namespace CoreApp.DefensiveCache.Configuration
 {
     public class InterfaceCacheConfiguration
     {
+        public InterfaceCacheConfiguration()
+        {
+            Methods = new List<MethodCacheConfiguration>();
+        }
 
-        public InterfaceCacheConfiguration(string name = default)
+        public InterfaceCacheConfiguration(string name) : this()
         {
             Name = name;
-            Methods = new List<MethodCacheConfiguration>();
         }
 
         public string Name { get; set; }
@@ -24,6 +27,5 @@ namespace CoreApp.DefensiveCache.Configuration
             };
             Methods.Add(method);
         }
-
     }
 }
