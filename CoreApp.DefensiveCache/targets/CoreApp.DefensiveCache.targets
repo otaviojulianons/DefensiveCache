@@ -1,0 +1,32 @@
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<IntermediateOutputPath Condition="$(IntermediateOutputPath) == '' Or $(IntermediateOutputPath) == '*Undefined*'">$(MSBuildProjectDirectory)\obj\$(Configuration)\</IntermediateOutputPath>
+		<CodeGeneratedFile>$(IntermediateOutputPath)DefensiveCacheImplemented.g.cs</CodeGeneratedFile>
+	</PropertyGroup>
+	<UsingTask
+	  TaskName="PrintMessage"
+	  TaskFactory="CodeTaskFactory"
+	  AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+		<ParameterGroup>
+			<Text Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System"/>
+			<Using Namespace="System.IO"/>
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[Log.LogWarning(Text);]]>
+			</Code>
+		</Task>
+	</UsingTask>
+	<UsingTask TaskName="CoreApp.DefensiveCache.BuildTasks.GenerateStubsTask"
+			   AssemblyFile="$(MSBuildThisFileDirectory)..\..\build\netstandard2.0\CoreApp.DefensiveCache.BuildTasks.dll" >
+	</UsingTask>
+	<Target Name="GenerateDefensiveCache" BeforeTargets="BeforeCompile;CoreCompile">
+		<PrintMessage Text="My custom alert"/>
+		<GenerateStubsTask BaseDirectory="$(MSBuildProjectDirectory)" OutputFile="$(CodeGeneratedFile)"/>
+		<ItemGroup Condition="Exists('$(CodeGeneratedFile)')">
+			<Compile Include="$(CodeGeneratedFile)" />
+			<FileWrites Include="$(CodeGeneratedFile)" />
+		</ItemGroup>
+	</Target>
+</Project>

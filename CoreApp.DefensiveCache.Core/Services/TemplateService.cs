@@ -1,23 +1,19 @@
-﻿using CoreApp.DefensiveCache.Configuration;
+﻿using CoreApp.DefensiveCache.Configuration.Core;
 using CoreApp.DefensiveCache.Extensions;
-using CoreApp.DefensiveCache.Templates;
-using Stubble.Core;
-using Stubble.Core.Builders;
-using Stubble.Core.Settings;
+using CoreApp.DefensiveCache.Templates.Core;
+using Mustache;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace CoreApp.DefensiveCache.Services
+namespace CoreApp.DefensiveCache.Services.Core
 {
     public static class TemplateService
     {
-        private static RenderSettings _renderSettings;
 
         public static string GenerateCacheCodeFromType(this Type type, InterfaceCacheConfiguration cacheConfiguration)
         {
-            
             var cacheTemplate = type.GetCacheTemplateFromType(cacheConfiguration);
             return GenerateCacheCode(cacheTemplate);
         }
@@ -51,22 +47,19 @@ namespace CoreApp.DefensiveCache.Services
             return cacheTemplate;
         }
 
-        
+
         public static string GenerateCacheCode(CacheTemplate cacheTemplate)
         {
-            if(_renderSettings == null)
-            {
-                _renderSettings = RenderSettings.GetDefaultRenderSettings();
-                _renderSettings.SkipHtmlEncoding = true;
-            }
-            StubbleVisitorRenderer _stubbleTemplate = new StubbleBuilder().Build();
-            return _stubbleTemplate.Render(GetCacheTemplate(), cacheTemplate, _renderSettings);
+            var template = GetCacheTemplate();
+            FormatCompiler compiler = new FormatCompiler() { RemoveNewLines = false };
+            Generator generator = compiler.Compile(template);
+            return generator.Render(cacheTemplate);
         }
 
         private static string GetCacheTemplate()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "CoreApp.DefensiveCache.Templates._CacheProxyTemplate.mustache";
+            var assembly = Assembly.GetAssembly(typeof(TemplateService));
+            var resourceName = "CoreApp.DefensiveCache.Core.Templates._CacheProxyTemplate.mustache";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))

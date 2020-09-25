@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CoreApp.DefensiveCache" Version="1.0.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
+    <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Implementations\CoreApp.DefensiveCache.Tests.Implementations.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
+using CoreApp.DefensiveCache;
+using CoreApp.DefensiveCache.Extensions;
+using CoreApp.DefensiveCache.Serializers;
+
+namespace DynamicAssembly
+{
+    public class {{Name}} : {{InterfaceName}}
+    {
+        private {{InterfaceName}} _repository;
+        private ICacheSerializer _cacheSerializer;
+        public {{Name}}({{InterfaceName}} repository, ICacheSerializer cacheSerializer)
+        {
+            _repository = repository;
+            _cacheSerializer = cacheSerializer;
+        }
+
+{{#each Methods}}
+{{#if Enabled}}
+{{#if Async}}
+        public async {{ReturnType}} {{Name}}({{ParametersDeclarations}})
+        {
+            var cacheKey = $"{{{CacheKeyTemplate}}}";
+            var cacheValue = await _cacheSerializer.GetAsync<{{ReturnTypeBase}}>(cacheKey);
+            if (Equals(cacheValue, default({{ReturnTypeBase}})))
+            {
+                cacheValue = await _repository.{{Name}}({{ParametersNames}});
+                _cacheSerializer.SetAsync(cacheKey, cacheValue, {{CacheExpirationSeconds}});
+            }
+            return cacheValue;
+        }
+{{#else}}
+
+        public {{ReturnType}} {{Name}}({{ParametersDeclarations}})
+        {
+            var cacheKey = $"{{{CacheKeyTemplate}}}";
+            var cacheValue = _cacheSerializer.Get<{{ReturnType}}>(cacheKey);
+            if (Equals(cacheValue, default({{ReturnType}})))
+            {
+                cacheValue = _repository.{{Name}}({{ParametersNames}});
+                _cacheSerializer.Set(cacheKey, cacheValue, {{CacheExpirationSeconds}});
+            }
+            return cacheValue;
+        }
+{{/if}}
+{{#else}}
+{{#if ReturnValue}}
+        public {{ReturnType}} {{Name}}({{ParametersDeclarations}})
+        {
+            return _repository.{{Name}}({{ParametersNames}});
+        }
+{{#else}}
+        public void {{Name}}({{ParametersDeclarations}})
+        {
+            _repository.{{Name}}({{ParametersNames}});
+        }
+{{/if}}
+{{/if}}
+{{/each}}
+    }
+}

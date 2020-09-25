@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CoreApp.DefensiveCache.Core\CoreApp.DefensiveCache.Core.csproj" />
     <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
     <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Implementations\CoreApp.DefensiveCache.Tests.Implementations.csproj" />
     <ProjectReference Include="..\CoreApp.DefensiveCache\CoreApp.DefensiveCache.csproj" />
