@@ -1,4 +1,5 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
+using CoreApp.DefensiveCache.Configuration.Core;
 using CoreApp.DefensiveCache.Serializers;
 using Microsoft.Extensions.Logging;
 using System;

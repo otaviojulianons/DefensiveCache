@@ -1,16 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	<OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CoreApp.DefensiveCache" Version="1.0.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
-    <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Implementations\CoreApp.DefensiveCache.Tests.Implementations.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<IntermediateOutputPath Condition="$(IntermediateOutputPath) == '' Or $(IntermediateOutputPath) == '*Undefined*'">$(MSBuildProjectDirectory)\obj\$(Configuration)\</IntermediateOutputPath>
+		<CodeGeneratedFile>$(IntermediateOutputPath)DefensiveCacheImplemented.g.cs</CodeGeneratedFile>
+		<StartupObject></StartupObject>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+		<OSArch>win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</OSArch>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="CoreApp.DefensiveCache" Version="1.0.2.23" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\CoreApp.DefensiveCache.Generator\CoreApp.DefensiveCache.Generator.csproj" />
+	  <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
+	  <ProjectReference Include="..\CoreApp.DefensiveCache\CoreApp.DefensiveCache.csproj" />
+	</ItemGroup>
 
 </Project>

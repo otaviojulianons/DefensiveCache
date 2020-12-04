@@ -1,7 +1,5 @@
 using CoreApp.DefensiveCache.Benchmark.Models;
-#pragma warning disable CS0234 // The type or namespace name 'Extensions' does not exist in the namespace 'CoreApp.DefensiveCache' (are you missing an assembly reference?)
 using CoreApp.DefensiveCache.Extensions;
-#pragma warning restore CS0234 // The type or namespace name 'Extensions' does not exist in the namespace 'CoreApp.DefensiveCache' (are you missing an assembly reference?)
 using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;

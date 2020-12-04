@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\_CacheProxyTemplate.mustache" />
+    <None Remove="Templates\_GenerateFile.mustache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\_GenerateFile.mustache" />
+    <EmbeddedResource Include="Templates\_CacheProxyTemplate.mustache" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+	<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.4" />
+	<PackageReference Include="Stubble.Core" Version="1.8.4" />
+  </ItemGroup>
+
+
+</Project>

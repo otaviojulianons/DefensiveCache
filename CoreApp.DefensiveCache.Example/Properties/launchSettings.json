@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CoreApp.DefensiveCache.Example": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CoreApp.DefensiveCache.Generator\CoreApp.DefensiveCache.Generator.csproj" />
     <ProjectReference Include="..\CoreApp.DefensiveCache\CoreApp.DefensiveCache.csproj" />
   </ItemGroup>
 

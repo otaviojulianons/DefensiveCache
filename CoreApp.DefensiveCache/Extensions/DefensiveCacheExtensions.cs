@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CoreApp.DefensiveCache.Configuration.Core;
+using CoreApp.DefensiveCache.Services.Core;
 
 namespace CoreApp.DefensiveCache.Extensions
 {
@@ -49,7 +51,7 @@ namespace CoreApp.DefensiveCache.Extensions
                 return;
 
             var typeService = serviceMatched.ServiceType;
-            var cacheTemplate = typeService.GetCacheTemplateFromType(cacheConfiguration);
+            var cacheTemplate = typeService.GetCacheTemplateFromReflectionType(cacheConfiguration);
             var cacheCode = TemplateService.GenerateCacheCode(cacheTemplate);
             var assemblyCache = CompilerService.GenerateAssemblyFromCode(typeService.Assembly, cacheTemplate.Name, cacheCode);
             var typeCache = assemblyCache.GetTypes().FirstOrDefault();

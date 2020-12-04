@@ -9,6 +9,9 @@ using CoreApp.DefensiveCache.Configuration.Core;
 using CoreApp.DefensiveCache.Services.Core;
 using CoreApp.DefensiveCache.Templates.Core;
 using CoreApp.DefensiveCache.Tests.Contracts;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
@@ -118,5 +121,14 @@ namespace CoreApp.DefensiveCache.Tests
         //    Assert.Equal(10, product1.Id);
         //    Assert.Equal(10, product2.Id);
         //}
+
+        [Fact]
+        public void GetCacheTemplateFromReflectionType()
+        {
+            var reflectionType = typeof(IProductRepository);
+            var cacheConfiguration = new InterfaceCacheConfiguration();
+            var template = reflectionType.GetCacheTemplateFromReflectionType(cacheConfiguration);
+            Assert.Equal(reflectionType.FullName, template.InterfaceName);
+        }
     }
 }
