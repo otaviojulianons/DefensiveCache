@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace CoreApp.DefensiveCache.Services.Core
+namespace CoreApp.DefensiveCache.Services
 {
     public class CompilerService
     {
@@ -20,27 +21,7 @@ namespace CoreApp.DefensiveCache.Services.Core
                 .WithLanguageVersion(LanguageVersion.Latest);
 
             var files = classCode.Select(@class => CSharpSyntaxTree.ParseText(@class, parseOptions)).ToList();
-            var referencesBuild = new List<MetadataReference>();
-
-            var coreDir = Directory.GetParent(typeof(Guid).Assembly.Location).FullName;
-            var netstandardLocation = Assembly.Load("netstandard").Location;
-
-            referencesBuild.Add(MetadataReference.CreateFromFile(referenceAssembly.Location));
-            referencesBuild.Add(MetadataReference.CreateFromFile(GetPathAssemblyFromNamespace(coreDir, "System.Runtime")));
-            referencesBuild.Add(MetadataReference.CreateFromFile(netstandardLocation));
-            referencesBuild.Add(MetadataReference.CreateFromFile(typeof(IDistributedCache).Assembly.Location));
-            referencesBuild.Add(MetadataReference.CreateFromFile(typeof(CompilerService).Assembly.Location));
-            referencesBuild.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
-            referencesBuild.Add(MetadataReference.CreateFromFile(GetPathAssemblyFromType(coreDir, typeof(object))));
-            referencesBuild.Add(MetadataReference.CreateFromFile(GetPathAssemblyFromType(coreDir, typeof(Enumerable))));
-            referencesBuild.Add(MetadataReference.CreateFromFile(GetPathAssemblyFromType(coreDir, typeof(Task))));
-
-            foreach (var reference in referenceAssembly.GetReferencedAssemblies())
-            {
-                var referencePath = GetPathAssemblyFromNamespace(coreDir, reference.Name);
-                if (File.Exists(referencePath))
-                    referencesBuild.Add(MetadataReference.CreateFromFile(referencePath));
-            }
+            var referencesBuild = GetMetadataReferencesForTemplate(referenceAssembly);
 
             var compilation = CSharpCompilation.Create("DynamicAssembly",
                               files,
@@ -61,6 +42,31 @@ namespace CoreApp.DefensiveCache.Services.Core
                 return Assembly.Load(stream.GetBuffer());
             }
 
+        }
+
+        private static IEnumerable<MetadataReference> GetMetadataReferencesForTemplate(Assembly referenceAssembly)
+        {
+            var coreDir = Directory.GetParent(typeof(Guid).Assembly.Location).FullName;
+            var netstandardLocation = Assembly.Load("netstandard").Location;
+
+            yield return MetadataReference.CreateFromFile(referenceAssembly.Location);
+            yield return MetadataReference.CreateFromFile(GetPathAssemblyFromNamespace(coreDir, "System.Runtime"));
+            yield return MetadataReference.CreateFromFile(netstandardLocation);
+            yield return MetadataReference.CreateFromFile(typeof(IDistributedCache).Assembly.Location);
+            yield return MetadataReference.CreateFromFile(typeof(IConfiguration).Assembly.Location);
+            yield return MetadataReference.CreateFromFile(typeof(ConfigurationBinder).Assembly.Location);
+            yield return MetadataReference.CreateFromFile(typeof(CompilerService).Assembly.Location);
+            yield return MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+            yield return MetadataReference.CreateFromFile(GetPathAssemblyFromType(coreDir, typeof(object)));
+            yield return MetadataReference.CreateFromFile(GetPathAssemblyFromType(coreDir, typeof(Enumerable)));
+            yield return MetadataReference.CreateFromFile(GetPathAssemblyFromType(coreDir, typeof(Task)));
+
+            foreach (var reference in referenceAssembly.GetReferencedAssemblies())
+            {
+                var referencePath = GetPathAssemblyFromNamespace(coreDir, reference.Name);
+                if (File.Exists(referencePath))
+                    yield return MetadataReference.CreateFromFile(referencePath);
+            }
         }
 
         private static string GetPathAssemblyFromType(string coreLocation, Type type) =>

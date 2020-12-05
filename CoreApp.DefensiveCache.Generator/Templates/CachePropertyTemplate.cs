@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace CoreApp.DefensiveCache.Templates.Core
+namespace CoreApp.DefensiveCache.Templates
 {
     public class CachePropertyTemplate
     {

@@ -1,11 +1,9 @@
-﻿using CoreApp.DefensiveCache.Configuration.Core;
-using CoreApp.DefensiveCache.Extensions.Core;
+﻿using CoreApp.DefensiveCache.Extensions;
+using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Tests.Contracts;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreApp.DefensiveCache.Tests.Implementations
@@ -17,6 +15,7 @@ namespace CoreApp.DefensiveCache.Tests.Implementations
         private IConfiguration _cacheConfiguration;
 
         public ProductCacheRepository(
+            ICacheSerializer cacheSerializer,
             IConfiguration configuration,
             IProductRepository concreteRepository, 
             IDistributedCache distributedCache)
@@ -28,7 +27,7 @@ namespace CoreApp.DefensiveCache.Tests.Implementations
         }
         public Product GetProduct(int id)
         {
-            var expirationGetProduct = _cacheConfiguration.GetValue("GetProductExpirationSeconds", 5);
+            var expirationGetProduct = _cacheConfiguration.GetValue("GetProduct:ExpirationSeconds", 5);
             if (expirationGetProduct == 0)
                 return _concreteRepository.GetProduct(id);
 

@@ -1,13 +1,14 @@
-﻿using CoreApp.DefensiveCache.Extensions.Core;
+﻿using CoreApp.DefensiveCache.Configuration;
+using CoreApp.DefensiveCache.Extensions;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace CoreApp.DefensiveCache.Templates.Core
+namespace CoreApp.DefensiveCache.Templates
 {
     public class CacheMethodTemplate
     {
-        public CacheMethodTemplate(MethodInfo methodInfo = null, Configuration.Core.MethodCacheConfiguration methodConfiguration = null)
+        public CacheMethodTemplate(MethodInfo methodInfo = null, MethodCacheConfiguration methodConfiguration = null)
         {
             if (methodInfo == null)
                 return;

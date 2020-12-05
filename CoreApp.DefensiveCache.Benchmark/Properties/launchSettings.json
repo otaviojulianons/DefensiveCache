@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "ConsoleTest": {
+    "CoreApp.DefensiveCache.Benchmark": {
       "commandName": "Project",
       "commandLineArgs": "run"
     }

@@ -1,5 +1,4 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
-using CoreApp.DefensiveCache.Configuration.Core;
 using CoreApp.DefensiveCache.Serializers;
 using Stubble.Core;
 using Stubble.Core.Builders;

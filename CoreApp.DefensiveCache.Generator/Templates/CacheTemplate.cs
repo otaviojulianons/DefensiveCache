@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace CoreApp.DefensiveCache.Templates.Core
+namespace CoreApp.DefensiveCache.Templates
 {
     public class CacheTemplate
     {

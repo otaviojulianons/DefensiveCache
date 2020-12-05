@@ -1,6 +1,6 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
-using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Proxy;
+using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CoreApp.DefensiveCache.Configuration.Core;
-using CoreApp.DefensiveCache.Services.Core;
 
 namespace CoreApp.DefensiveCache.Extensions
 {
@@ -20,10 +18,21 @@ namespace CoreApp.DefensiveCache.Extensions
         {
             var serviceProvider = services.BuildServiceProvider();
             var conf = serviceProvider.GetService<IConfiguration>();
-            var cacheServices = conf.GetSection("Cache:Services").Get<IEnumerable<InterfaceCacheConfiguration>>();
-
-            foreach (var cacheService in cacheServices)
-                services.DecorateWithCacheConfiguration(cacheService);
+            var dynamicServices = conf.GetSection("Cache:DynamicServices").GetChildren();
+            foreach (var serviceConfiguration in dynamicServices)
+            {
+                var interfaceCacheConfiguration = new InterfaceCacheConfiguration(serviceConfiguration.Key);
+                var methodsConfiguration = serviceConfiguration.GetChildren();
+                foreach (var methodConfiguration in methodsConfiguration)
+                {
+                    var methodName = methodConfiguration.Key;
+                    var methodCacheConfiguration = methodConfiguration.Get<MethodCacheConfiguration>();
+                    interfaceCacheConfiguration
+                        .AddMethod(methodName, methodCacheConfiguration.KeyTemplate, methodCacheConfiguration.ExpirationSeconds);
+                }
+                services.DecorateWithCacheConfiguration(interfaceCacheConfiguration);
+            }
+                
         }
 
         public static void DecorateWithCacheGenerated<T>(

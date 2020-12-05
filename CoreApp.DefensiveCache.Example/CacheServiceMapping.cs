@@ -1,5 +1,5 @@
-﻿using CoreApp.DefensiveCache.Configuration.Core;
-using CoreApp.DefensiveCache.Core.Interfaces;
+﻿using CoreApp.DefensiveCache.Configuration;
+using CoreApp.DefensiveCache.Interfaces;
 using CoreApp.DefensiveCache.Tests.Contracts;
 
 namespace CoreApp.DefensiveCache.Example

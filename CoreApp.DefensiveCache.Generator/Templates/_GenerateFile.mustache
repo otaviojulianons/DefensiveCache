@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using CoreApp.DefensiveCache;
-using CoreApp.DefensiveCache.Extensions;
 using CoreApp.DefensiveCache.Serializers;
+using CoreApp.DefensiveCache.Extensions;
+using Microsoft.Extensions.Configuration;
 
+/********* Hey You! *********
+ *
+ * This is a generated file and is rewritten every time you build the project. Mappings are located in the ICacheServiceMapper.
+ * 
+ ****************************/
 
 namespace DynamicAssembly
 {
@@ -17,8 +23,8 @@ namespace DynamicAssembly
         private IConfiguration _cacheConfiguration;
 
         public {{Name}}(
-            IConfiguration configuration,
             {{InterfaceName}} repository, 
+            IConfiguration configuration,
             ICacheSerializer cacheSerializer)
         {
             _repository = repository;
@@ -32,7 +38,7 @@ namespace DynamicAssembly
 
         public async {{ReturnType}} {{Name}}({{ParametersDeclarations}})
         {
-            var expiration{{Name}} = _cacheConfiguration.GetValue("{{Name}}ExpirationSeconds", {{CacheExpirationSeconds}});
+            var expiration{{Name}} = _cacheConfiguration.GetValue("{{Name}}:ExpirationSeconds", {{CacheExpirationSeconds}});
             if (expiration{{Name}} == 0)
                 return await _repository.{{Name}}({{ParametersNames}});
 
@@ -50,7 +56,7 @@ namespace DynamicAssembly
 
         public {{ReturnType}} {{Name}}({{ParametersDeclarations}})
         {
-            var expiration{{Name}} = _cacheConfiguration.GetValue("{{Name}}ExpirationSeconds", {{CacheExpirationSeconds}});
+            var expiration{{Name}} = _cacheConfiguration.GetValue("{{Name}}:ExpirationSeconds", {{CacheExpirationSeconds}});
             if (expiration{{Name}} == 0)
                 return _repository.{{Name}}({{ParametersNames}});
 

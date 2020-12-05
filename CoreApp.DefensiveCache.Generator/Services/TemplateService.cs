@@ -1,7 +1,7 @@
-﻿using CoreApp.DefensiveCache.Configuration.Core;
-using CoreApp.DefensiveCache.Core.Interfaces;
-using CoreApp.DefensiveCache.Extensions.Core;
-using CoreApp.DefensiveCache.Templates.Core;
+﻿using CoreApp.DefensiveCache.Configuration;
+using CoreApp.DefensiveCache.Interfaces;
+using CoreApp.DefensiveCache.Extensions;
+using CoreApp.DefensiveCache.Templates;
 using Stubble.Core;
 using Stubble.Core.Builders;
 using Stubble.Core.Settings;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace CoreApp.DefensiveCache.Services.Core
+namespace CoreApp.DefensiveCache.Services
 {
     public static class TemplateService
     {

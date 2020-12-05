@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoreApp.DefensiveCache.Configuration.Core
+namespace CoreApp.DefensiveCache.Configuration
 {
     public class InterfaceCacheConfigurationTyped<T> : InterfaceCacheConfigurationTyped
     {

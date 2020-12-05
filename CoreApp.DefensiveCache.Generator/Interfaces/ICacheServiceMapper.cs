@@ -1,6 +1,6 @@
-﻿using CoreApp.DefensiveCache.Configuration.Core;
+﻿using CoreApp.DefensiveCache.Configuration;
 
-namespace CoreApp.DefensiveCache.Core.Interfaces
+namespace CoreApp.DefensiveCache.Interfaces
 {
     public interface ICacheServiceMapper
     {

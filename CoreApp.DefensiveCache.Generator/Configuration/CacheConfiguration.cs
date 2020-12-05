@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreApp.DefensiveCache.Configuration.Core
+namespace CoreApp.DefensiveCache.Configuration
 {
     public class CacheConfiguration
     {

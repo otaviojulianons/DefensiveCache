@@ -1,4 +1,4 @@
-﻿using CoreApp.DefensiveCache.Services.Core;
+﻿using CoreApp.DefensiveCache.Services;
 using System;
 using System.IO;
 using System.Linq;

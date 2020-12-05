@@ -1,4 +1,4 @@
-﻿namespace CoreApp.DefensiveCache.Configuration.Core
+﻿namespace CoreApp.DefensiveCache.Configuration
 {
     public class MethodCacheConfiguration
     {

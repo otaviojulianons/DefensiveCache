@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace CoreApp.DefensiveCache.Extensions.Core
+namespace CoreApp.DefensiveCache.Extensions
 {
     public static class ReflectionExtensions
     {
-        public static T CreateInstanceDecorated<T>(Type type, params object[] args) =>
-            (T)Activator.CreateInstance(type, args);
-
         public static string GetVarDeclaration(this ParameterInfo parameterInfo) =>
             $"{parameterInfo.ParameterType.FullName} {parameterInfo.Name}";
 
