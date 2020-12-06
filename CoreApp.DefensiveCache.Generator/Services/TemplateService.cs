@@ -58,13 +58,13 @@ namespace CoreApp.DefensiveCache.Services
             if (!File.Exists(assemplyPath))
                 yield break;
             var assembly = Assembly.LoadFrom(assemplyPath);
-            var cacheServiceTypes = assembly.GetCacheServiceMappers().SelectMany(GetCacheServiceMappers);
+            var cacheServiceTypes = assembly.GetCacheServiceMappers().SelectMany(GetCacheServiceMappers)?.ToList();
             foreach (var cacheServiceType in cacheServiceTypes)
                 yield return cacheServiceType.Type.GetCacheTemplateFromReflectionType(cacheServiceType.Configuration);
         }
 
         private static IEnumerable<Type> GetCacheServiceMappers(this Assembly assembly) =>
-            assembly.GetTypes().Where(x => x.IsClass && (x.GetInterfaces()?.Contains(typeof(ICacheServiceMapper)) ?? false));
+            assembly.GetTypesSafe().Where(x => x.IsClass && (x.GetInterfaces()?.Contains(typeof(ICacheServiceMapper)) ?? false));
 
         private static IEnumerable<(Type Type, InterfaceCacheConfiguration Configuration)> GetCacheServiceMappers(Type cacheServiceMapperType)
         {
@@ -91,7 +91,7 @@ namespace CoreApp.DefensiveCache.Services
         private static string GetCacheTemplate()
         {
             var assembly = Assembly.GetAssembly(typeof(TemplateService));
-            var resourceName = "CoreApp.DefensiveCache.Generator.Templates._GenerateFile.mustache";
+            var resourceName = "CoreApp.DefensiveCache.Templates._GenerateFile.mustache";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))

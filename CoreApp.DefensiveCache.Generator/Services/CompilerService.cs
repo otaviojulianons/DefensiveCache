@@ -13,6 +13,8 @@ namespace CoreApp.DefensiveCache.Services
 {
     public class CompilerService
     {
+        public const string DynamicAssemblyName = "DynamicAssembly";
+
         public static Assembly GenerateAssemblyFromCode(Assembly referenceAssembly, string className, params string[] classCode)
         {
             CSharpParseOptions parseOptions = new CSharpParseOptions()
@@ -23,7 +25,7 @@ namespace CoreApp.DefensiveCache.Services
             var files = classCode.Select(@class => CSharpSyntaxTree.ParseText(@class, parseOptions)).ToList();
             var referencesBuild = GetMetadataReferencesForTemplate(referenceAssembly);
 
-            var compilation = CSharpCompilation.Create("DynamicAssembly",
+            var compilation = CSharpCompilation.Create(DynamicAssemblyName,
                               files,
                               referencesBuild,
                               new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -74,5 +76,6 @@ namespace CoreApp.DefensiveCache.Services
 
         private static string GetPathAssemblyFromNamespace(string coreLocation, string @namespace) =>
             $"{coreLocation}{Path.DirectorySeparatorChar}{@namespace}.dll";
+
     }
 }

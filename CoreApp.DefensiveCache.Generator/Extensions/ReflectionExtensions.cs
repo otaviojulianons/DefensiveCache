@@ -31,5 +31,17 @@ namespace CoreApp.DefensiveCache.Extensions
                 foreach (var method in type.BaseType.GetAllMethods())
                     yield return method;
         }
+
+        public static Type[] GetTypesSafe(this Assembly assembly)
+        { 
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                return ex.Types.Where(x => x != null)?.ToArray();
+            }
+        }
     }
 }

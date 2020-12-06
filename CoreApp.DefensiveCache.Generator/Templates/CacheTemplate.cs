@@ -6,12 +6,13 @@ namespace CoreApp.DefensiveCache.Templates
 {
     public class CacheTemplate
     {
+        public const string NameSuffix = "DynamicCache";
         private List<CacheMethodTemplate> _methods = new List<CacheMethodTemplate>();
         private List<CachePropertyTemplate> _properties = new List<CachePropertyTemplate>();
 
         public CacheTemplate(Type type)
         {
-            Name = type.Name + "DynamicCache";
+            Name = type.Name + NameSuffix;
             InterfaceName = type.FullName;
         }
 
