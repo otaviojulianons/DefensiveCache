@@ -1,4 +1,6 @@
+using CoreApp.DefensiveCache.Extensions;
 using CoreApp.DefensiveCache.Tests.Contracts;
+using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Tests.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,8 +24,17 @@ namespace CoreApp.DefensiveCache.Example.API
         {
             services.AddControllers();
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.Decorate<IProductRepository, ProductCacheRepository>();
-            services.AddDistributedMemoryCache();
+            services.AddScoped<IGroupRepository, GroupRepository>();
+
+            //services.AddDistributedMemoryCache();
+            services.AddDistributedRedisCache( options => {
+                options.Configuration = Configuration.GetConnectionString("RedisConnection");
+                options.InstanceName = "example";
+            });
+
+            services.AddScoped<ICacheSerializer, JsonNetCacheSerializer>();
+            services.DecorateWithCacheServiceMapping(new CacheServiceMapping());
+            services.DecorateWithCacheDynamicServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

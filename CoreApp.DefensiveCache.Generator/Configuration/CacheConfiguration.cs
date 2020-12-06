@@ -11,6 +11,12 @@ namespace CoreApp.DefensiveCache.Configuration
             Services = new List<InterfaceCacheConfiguration>();
         }
 
+        public InterfaceCacheConfiguration this[string serviceName]
+        {
+            get => Services?.FirstOrDefault(x => x.Name == serviceName);
+        }
+
+
         public List<InterfaceCacheConfiguration> Services { get; set; }
 
         public void AddCacheService<T>(Action<InterfaceCacheConfigurationTyped<T>> configure)

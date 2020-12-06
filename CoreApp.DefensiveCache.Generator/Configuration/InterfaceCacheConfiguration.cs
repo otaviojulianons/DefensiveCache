@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CoreApp.DefensiveCache.Configuration
 {
@@ -13,7 +14,12 @@ namespace CoreApp.DefensiveCache.Configuration
         { 
             Name = name;
         }
-        
+
+        public MethodCacheConfiguration this[string methodName]
+        {
+            get => Methods?.FirstOrDefault(x => x.Name == methodName);
+        }
+
         public string Name { get; set; }
         public List<MethodCacheConfiguration> Methods { get; set; }
 
@@ -26,6 +32,17 @@ namespace CoreApp.DefensiveCache.Configuration
                 ExpirationSeconds = expirationSeconds
             };
             Methods.Add(method);
+        }
+
+        public void Merge(InterfaceCacheConfiguration newCacheConfiguration)
+        {
+            foreach (var methodCacheConfiguration in newCacheConfiguration?.Methods ?? new List<MethodCacheConfiguration>())
+            {
+                var matchedMethod = this[methodCacheConfiguration.Name];
+                if (matchedMethod == null)
+                    return;
+                matchedMethod.ExpirationSeconds = methodCacheConfiguration.ExpirationSeconds;
+            }
         }
     }
 }

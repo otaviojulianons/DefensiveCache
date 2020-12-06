@@ -42,7 +42,7 @@ namespace CoreApp.DefensiveCache.Benchmark
             services.Decorate<IDefensiveCacheImplemented, DefensiveCacheImplemented>();
 
             services.AddDistributedMemoryCache();
-            services.DecorateWithCacheGeneratedFromConfiguration();
+            services.DecorateWithCacheDynamicServices();
 
             //services.DecorateWithCacheGenerated<IDefensiveCacheGenerated>((config) =>
             //{

@@ -1,7 +1,9 @@
 ﻿using CoreApp.DefensiveCache.Configuration;
+using CoreApp.DefensiveCache.Interfaces;
 using CoreApp.DefensiveCache.Proxy;
 using CoreApp.DefensiveCache.Serializers;
 using CoreApp.DefensiveCache.Services;
+using CoreApp.DefensiveCache.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,11 +16,37 @@ namespace CoreApp.DefensiveCache.Extensions
 {
     public static class DefensiveCacheExtensions
     {        
-        public static void DecorateWithCacheGeneratedFromConfiguration(this IServiceCollection services)
+        public static void DecorateWithCacheDynamicServices(this IServiceCollection services)
         {
             var serviceProvider = services.BuildServiceProvider();
-            var conf = serviceProvider.GetService<IConfiguration>();
-            var dynamicServices = conf.GetSection("Cache:DynamicServices").GetChildren();
+            var configuration = serviceProvider.GetService<IConfiguration>();
+            foreach (var interfaceCacheConfiguration in configuration.GetInterfaceCacheConfigurations("Cache:DynamicServices"))
+                services.DecorateWithCacheDynamicService(interfaceCacheConfiguration);
+        }
+
+        public static void DecorateWithCacheServiceMapping<T>(this IServiceCollection services, T cacheServiceMapping) where T : ICacheServiceMapper
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            var configuration = serviceProvider.GetService<IConfiguration>();
+            var appSettingsCacheConfigurations = configuration.GetInterfaceCacheConfigurations("Cache:Services");
+
+            var cacheConfigurationMapped = new CacheConfiguration();
+            cacheServiceMapping.Map(cacheConfigurationMapped);
+
+            foreach (var interfaceCacheConfiguration in appSettingsCacheConfigurations)
+            {
+                var matchedConfiguration = cacheConfigurationMapped[interfaceCacheConfiguration.Name];
+                matchedConfiguration?.Merge(interfaceCacheConfiguration);
+            }
+
+            var assemblyServiceMapping = Assembly.GetAssembly(typeof(T));
+            foreach (var interfaceCacheConfiguration in cacheConfigurationMapped.Services)
+                services.DecorateWithCacheGeneratedService(assemblyServiceMapping, interfaceCacheConfiguration);
+        }
+
+        private static IEnumerable<InterfaceCacheConfiguration> GetInterfaceCacheConfigurations(this IConfiguration configuration, string keyConfiguration)
+        {
+            var dynamicServices = configuration.GetSection(keyConfiguration).GetChildren();
             foreach (var serviceConfiguration in dynamicServices)
             {
                 var interfaceCacheConfiguration = new InterfaceCacheConfiguration(serviceConfiguration.Key);
@@ -30,9 +58,8 @@ namespace CoreApp.DefensiveCache.Extensions
                     interfaceCacheConfiguration
                         .AddMethod(methodName, methodCacheConfiguration.KeyTemplate, methodCacheConfiguration.ExpirationSeconds);
                 }
-                services.DecorateWithCacheConfiguration(interfaceCacheConfiguration);
+                yield return interfaceCacheConfiguration;
             }
-                
         }
 
         public static void DecorateWithCacheGenerated<T>(
@@ -41,7 +68,7 @@ namespace CoreApp.DefensiveCache.Extensions
         {
             var configuration = new InterfaceCacheConfigurationTyped<T>();
             configure(configuration);
-            services.DecorateWithCacheConfiguration(configuration);
+            services.DecorateWithCacheDynamicService(configuration);
         }
 
         public static void DecorateWithCacheProxy<T>(
@@ -53,7 +80,7 @@ namespace CoreApp.DefensiveCache.Extensions
             services.DecorateWithCacheProxy(configuration);
         }
 
-        public static void DecorateWithCacheConfiguration(this IServiceCollection services, InterfaceCacheConfiguration cacheConfiguration)
+        public static void DecorateWithCacheDynamicService(this IServiceCollection services, InterfaceCacheConfiguration cacheConfiguration)
         {
             var serviceMatched = services.FirstOrDefault(x => x.ServiceType.Name == cacheConfiguration.Name);
             if (serviceMatched == null)
@@ -65,6 +92,20 @@ namespace CoreApp.DefensiveCache.Extensions
             var assemblyCache = CompilerService.GenerateAssemblyFromCode(typeService.Assembly, cacheTemplate.Name, cacheCode);
             var typeCache = assemblyCache.GetTypes().FirstOrDefault();
             services.Decorate(typeService, typeCache);
+        }
+
+        public static void DecorateWithCacheGeneratedService(this IServiceCollection services, Assembly assembly, InterfaceCacheConfiguration cacheConfiguration)
+        {
+            var serviceMatched = services.FirstOrDefault(x => x.ServiceType.Name == cacheConfiguration.Name);
+            if (serviceMatched == null)
+                return;
+
+            var typeService = serviceMatched.ServiceType;
+            var generatedType = assembly.GetTypes().FirstOrDefault(x => x.Name == cacheConfiguration.Name + CacheTemplate.NameSuffix);
+            if (generatedType == null)
+                return;
+
+            services.Decorate(typeService, generatedType);
         }
 
         private static void DecorateWithCacheProxy(this IServiceCollection services, InterfaceCacheConfiguration repositoryInterface)
