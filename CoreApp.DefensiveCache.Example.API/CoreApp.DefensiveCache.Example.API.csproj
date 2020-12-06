@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Implementations\CoreApp.DefensiveCache.Tests.Implementations.csproj" />
+    <Folder Include="Repositories\"/>
   </ItemGroup>
-
-
+  <ItemGroup>
+    <ProjectReference Include="..\CoreApp.DefensiveCache.Generator\CoreApp.DefensiveCache.Generator.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CoreApp.DefensiveCache" Version="1.0.0.28"/>
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0"/>
+  </ItemGroup>
 </Project>

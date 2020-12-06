@@ -15,13 +15,8 @@
 		<OSArch>win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</OSArch>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="CoreApp.DefensiveCache" Version="1.0.2.23" />
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-	</ItemGroup>
-	<ItemGroup>
 	  <ProjectReference Include="..\CoreApp.DefensiveCache.Generator\CoreApp.DefensiveCache.Generator.csproj" />
 	  <ProjectReference Include="..\CoreApp.DefensiveCache.Tests.Contracts\CoreApp.DefensiveCache.Tests.Contracts.csproj" />
-	  <ProjectReference Include="..\CoreApp.DefensiveCache\CoreApp.DefensiveCache.csproj" />
 	</ItemGroup>
 
 </Project>

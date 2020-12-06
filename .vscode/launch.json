@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch CodeGen",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/CoreApp.DefensiveCache.CodeGen/bin/Debug/netcoreapp3.1/CoreApp.DefensiveCache.CodeGen.dll",
+            "args": [
+                "C:\\Projetos\\github\\DefensiveCache\\CoreApp.DefensiveCache.Example.API\\bin\\Debug\\netcoreapp3.1\\CoreApp.DefensiveCache.Example.API.dll",
+                "GenerateFile.g.cs"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Launch Example.API",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/CoreApp.DefensiveCache.Example.API/bin/Debug/netcoreapp3.1/CoreApp.DefensiveCache.Example.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/CoreApp.DefensiveCache.Example.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/product"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}

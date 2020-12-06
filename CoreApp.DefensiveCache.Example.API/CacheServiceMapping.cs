@@ -2,8 +2,9 @@
 using CoreApp.DefensiveCache.Interfaces;
 using CoreApp.DefensiveCache.Tests.Contracts;
 
-namespace CoreApp.DefensiveCache.Example
+namespace CoreApp.DefensiveCache.Example.API
 {
+
     public class CacheServiceMapping : ICacheServiceMapper
     {
         public void Map(CacheConfiguration cacheConfiguration)
