@@ -9,6 +9,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 {
     public class DefensiveCacheImplemented : IDefensiveCacheImplemented
     {
+        private const int SegundosCache = 600;
         private ITestRepository _testRepository;
         private IDistributedCache _distributedCache;
 
@@ -27,7 +28,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
             {
                 value = await _testRepository.GetObjectAsync(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
                 await _distributedCache.SetAsync("GetObjectAsync" + id, value, cacheEntryOptions);
             }
             return value;
@@ -35,13 +36,13 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 
         public Entity GetObject(int id)
         {
-            var value = _distributedCache.GetAsync<Entity>("GetObject").Result;
+            var value = _distributedCache.Get<Entity>("GetObject");
             if (value == null)
             {
                 value = _testRepository.GetObject(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
-                _distributedCache.SetAsync("GetObject", value, cacheEntryOptions);
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
+                _distributedCache.Set("GetObject", value, cacheEntryOptions);
             }
             return value;
         }
@@ -53,7 +54,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
             {
                 value = await _testRepository.GetListObjectAsync(filter);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
                 await _distributedCache.SetAsync("GetListObjectAsync" + filter.Page + filter.Records, value, cacheEntryOptions);
             }
             return value;
@@ -61,13 +62,13 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 
         public List<Entity> GetListObject(ParamQuery filter)
         {
-            var value = _distributedCache.GetAsync<List<Entity>>("GetListObject" + filter.Page + filter.Records).Result;
+            var value = _distributedCache.Get<List<Entity>>("GetListObject" + filter.Page + filter.Records);
             if (value == null)
             {
                 value = _testRepository.GetListObject(filter);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
-                _distributedCache.SetAsync("GetListObject" + filter.Page + filter.Records, value, cacheEntryOptions);
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
+                _distributedCache.Set("GetListObject" + filter.Page + filter.Records, value, cacheEntryOptions);
             }
             return value;
         }
@@ -79,7 +80,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
             {
                 value = await _testRepository.GetStringAsync(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
                 await _distributedCache.SetAsync("GetStringAsync_" + id, value, cacheEntryOptions);
             }
             return value;
@@ -87,13 +88,13 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 
         public string GetString(int id)
         {
-            var value = _distributedCache.GetAsync<string>("GetString" + id).Result;
+            var value = _distributedCache.Get<string>("GetString" + id);
             if (value == null)
             {
                 value = _testRepository.GetString(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
-                _distributedCache.SetAsync("GetString" + id, value, cacheEntryOptions);
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
+                _distributedCache.Set("GetString" + id, value, cacheEntryOptions);
             }
             return value;
         }
@@ -105,7 +106,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
             {
                 value = await _testRepository.GetIntAsync(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
                 await _distributedCache.SetAsync("GetIntAsync" + id, value, cacheEntryOptions);
             }
             return value;
@@ -113,13 +114,13 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 
         public int? GetInt(int id)
         {
-            var value = _distributedCache.GetAsync<int?>("GetInt" + id).Result;
+            var value = _distributedCache.Get<int?>("GetInt" + id);
             if (Equals(value, default(int?)))
             {
                 value = _testRepository.GetInt(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
-                _distributedCache.SetAsync("GetInt" + id, value, cacheEntryOptions);
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
+                _distributedCache.Set("GetInt" + id, value, cacheEntryOptions);
             }
             return value;
         }
@@ -131,7 +132,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
             {
                 value = await _testRepository.GetDateTimeAsync(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
                 await _distributedCache.SetAsync("GetDateTimeAsync" + id, value, cacheEntryOptions);
             }
             return value;
@@ -139,13 +140,13 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 
         public DateTime GetDateTime(int id)
         {
-            var value = _distributedCache.GetAsync<DateTime>("GetDateTime" + id).Result;
+            var value = _distributedCache.Get<DateTime>("GetDateTime" + id);
             if (Equals(value, default(DateTime)))
             {
                 value = _testRepository.GetDateTime(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
-                _distributedCache.SetAsync("GetDateTime" + id, value, cacheEntryOptions);
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
+                _distributedCache.Set("GetDateTime" + id, value, cacheEntryOptions);
             }
             return value;
         }
@@ -157,7 +158,7 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
             {
                 value = await _testRepository.GetBoolAsync(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
                 await _distributedCache.SetAsync("GetBoolAsync" + id, value, cacheEntryOptions);
             }
             return value;
@@ -165,13 +166,13 @@ namespace CoreApp.DefensiveCache.Benchmark.Repositories
 
         public bool GetBool(int id)
         {
-            var value = _distributedCache.GetAsync<bool>("GetBool" + id).Result;
+            var value = _distributedCache.Get<bool>("GetBool" + id);
             if (Equals(value,default(bool)))
             {
                 value = _testRepository.GetBool(id);
                 var cacheEntryOptions = new DistributedCacheEntryOptions();
-                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(1000));
-                _distributedCache.SetAsync("GetBool" + id, value, cacheEntryOptions);
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(SegundosCache));
+                _distributedCache.Set("GetBool" + id, value, cacheEntryOptions);
             }
             return value;
         }

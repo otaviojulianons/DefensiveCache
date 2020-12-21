@@ -20,12 +20,21 @@ namespace CoreApp.DefensiveCache.Serializers
 
         public T Get<T>(string key)
         {
-            return GetAsync<T>(key).Result;
+            _logger.LogInformation($"Get key:{key} type:{typeof(T).Name}");
+            var data = _distributedCache.Get(key);
+            if (data == null)
+                return default;
+
+            using (var memoryStream = new MemoryStream(data))
+            {
+                var binaryFormatter = new BinaryFormatter();
+                return (T)binaryFormatter.Deserialize(memoryStream);
+            }
         }
 
         public async Task<T> GetAsync<T>(string key)
         {
-            _logger.LogInformation($"Get key:{key} type:{typeof(T).Name}");
+            _logger.LogInformation($"GetAsync key:{key} type:{typeof(T).Name}");
             var data = await _distributedCache.GetAsync(key);
             if (data == null)
                 return default;
@@ -39,12 +48,24 @@ namespace CoreApp.DefensiveCache.Serializers
 
         public void Set<T>(string key, T data, double expirationSeconds)
         {
-            SetAsync(key, data, expirationSeconds).Wait();
+            _logger.LogInformation($"Set key:{key} with {expirationSeconds}s type:{typeof(T).Name}");
+            if (data == null)
+                return;
+
+            using (var memoryStream = new MemoryStream())
+            {
+                var binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(memoryStream, data);
+                var dataArray = memoryStream.ToArray();
+                var cacheEntryOptions = new DistributedCacheEntryOptions();
+                cacheEntryOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(expirationSeconds));
+                _distributedCache.Set(key, dataArray, cacheEntryOptions);
+            }
         }
 
         public async Task SetAsync<T>(string key, T data, double expirationSeconds)
         {
-            _logger.LogInformation($"Set key:{key} with {expirationSeconds}s type:{typeof(T).Name}");
+            _logger.LogInformation($"SetAsync key:{key} with {expirationSeconds}s type:{typeof(T).Name}");
             if (data == null)
                 return;
 

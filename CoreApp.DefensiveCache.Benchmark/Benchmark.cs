@@ -35,46 +35,36 @@ namespace CoreApp.DefensiveCache.Benchmark
             var services = new ServiceCollection();
             services.AddLogging(cfg => cfg.AddConsole());
             services.AddSingleton<IConfiguration>(configuration);
-            services.AddScoped<ICacheSerializer, BinaryNetCacheSerializer>();
-            services.AddScoped<IDefensiveCacheImplemented, TestRepository1>();
-            services.AddScoped<IDefensiveCacheGenerated, TestRepository2>();
-            services.AddScoped<IDefensiveCacheDynamicProxy, TestRepository3>();
+
+            //services.AddDistributedMemoryCache();
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("RedisConnection");
+            });
+
+            services.AddScoped<IDefensiveCacheImplemented, TestRepositoryImplemented>();
+            services.AddScoped<IDefensiveCacheDynamic, TestRepositoryDynamic>();
+            services.AddScoped<IDefensiveCacheMapping, TestRepositoryMapping>();
+
             services.Decorate<IDefensiveCacheImplemented, DefensiveCacheImplemented>();
 
-            services.AddDistributedMemoryCache();
-            services.DecorateWithCacheDynamicServices();
-
-            //services.DecorateWithCacheGenerated<IDefensiveCacheGenerated>((config) =>
-            //{
-            //    config.AddMethod(x => nameof(x.GetBool), "genGetBool{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetBoolAsync), "genGetBoolAsync{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetDateTime), "genGetDateTime{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetDateTimeAsync), "genGetDateTimeAsync{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetInt), "genGetInt{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetIntAsync), "genGetIntAsync{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetListObject), "genGetListObject{filter.Page}_{filter.Records}", 60);
-            //    config.AddMethod(x => nameof(x.GetListObjectAsync), "genGetListObjectAsync{filter.Page}_{filter.Records}", 60);
-            //    config.AddMethod(x => nameof(x.GetObject), "genGetObject{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetObjectAsync), "genGetObjectAsync{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetString), "genGetString{id}", 60);
-            //    config.AddMethod(x => nameof(x.GetStringAsync), "genGetStringAsync{id}", 60);
-            //});
-
-            //services.DecorateWithCacheProxy<IDefensiveCacheDynamicProxy>((config) =>
-            //{
-            //    config.AddMethod(x => nameof(x.GetBool), "proxyGetBool{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetBoolAsync), "proxyGetBoolAsync{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetDateTime), "proxyGetDateTime{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetDateTimeAsync), "proxyGetDateTimeAsync{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetInt), "proxyGetInt{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetIntAsync), "proxyGetIntAsync{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetListObject), "proxyGetListObject{{filter.Page}}_{{filter.Records}}", 60);
-            //    config.AddMethod(x => nameof(x.GetListObjectAsync), "proxyGetListObjectAsync{{filter.Page}}_{{filter.Records}}", 60);
-            //    config.AddMethod(x => nameof(x.GetObject), "proxyGetObject{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetObjectAsync), "proxyGetObjectAsync{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetString), "proxyGetString{{id}}", 60);
-            //    config.AddMethod(x => nameof(x.GetStringAsync), "proxyGetStringAsync{{id}}", 60);
-            //});
+            services.AddScoped<ICacheSerializer, JsonNetCacheSerializer>();
+            services.DecorateWithCacheServiceMapping(new CacheServiceMapping());
+            services.DecorateWithCacheDynamicService<IDefensiveCacheDynamic>((config) =>
+            {
+                config.AddMethod(x => nameof(x.GetBool), "genGetBool{id}", 600);
+                config.AddMethod(x => nameof(x.GetBoolAsync), "genGetBoolAsync{id}", 600);
+                config.AddMethod(x => nameof(x.GetDateTime), "genGetDateTime{id}", 600);
+                config.AddMethod(x => nameof(x.GetDateTimeAsync), "genGetDateTimeAsync{id}", 600);
+                config.AddMethod(x => nameof(x.GetInt), "genGetInt{id}", 600);
+                config.AddMethod(x => nameof(x.GetIntAsync), "genGetIntAsync{id}", 600);
+                config.AddMethod(x => nameof(x.GetListObject), "genGetListObject{filter.Page}_{filter.Records}", 600);
+                config.AddMethod(x => nameof(x.GetListObjectAsync), "genGetListObjectAsync{filter.Page}_{filter.Records}", 600);
+                config.AddMethod(x => nameof(x.GetObject), "genGetObject{id}", 600);
+                config.AddMethod(x => nameof(x.GetObjectAsync), "genGetObjectAsync{id}", 600);
+                config.AddMethod(x => nameof(x.GetString), "genGetString{id}", 600);
+                config.AddMethod(x => nameof(x.GetStringAsync), "genGetStringAsync{id}", 600);
+            });
 
             _serviceProvider = services.BuildServiceProvider();
         }
@@ -95,19 +85,19 @@ namespace CoreApp.DefensiveCache.Benchmark
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var repository = scope.ServiceProvider.GetService<IDefensiveCacheGenerated>();
+                var repository = scope.ServiceProvider.GetService<IDefensiveCacheDynamic>();
                 await RunTest(repository);
                 await RunTest(repository);
             }
         }
 
         [Benchmark]
-        public async Task ProcessDefensiveCacheDynamicProxy()
+        public async Task ProcessDefensiveCacheMapping()
         {
             
             using (var scope = _serviceProvider.CreateScope())
             {
-                var repository = scope.ServiceProvider.GetService<IDefensiveCacheDynamicProxy>();
+                var repository = scope.ServiceProvider.GetService<IDefensiveCacheMapping>();
                 await RunTest(repository);
                 await RunTest(repository);
             }

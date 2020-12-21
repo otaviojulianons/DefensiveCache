@@ -6,10 +6,11 @@
 		<AssemblyName>CoreApp.DefensiveCache.Generator</AssemblyName>
 		<Authors>Otávio JNS</Authors>
 		<Company>CoreApp</Company>
-		<IsPackable>false</IsPackable>
+		<IsPackable>true</IsPackable>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<Version>1.0.0.24</Version>
+		<Version>1.0.0.25</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
   <ItemGroup>

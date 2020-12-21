@@ -10,7 +10,7 @@ namespace CoreApp.DefensiveCache.Benchmark
             {
                 var banchmark = new Benchmark();
                 banchmark.ProcessDefensiveCacheGenerated().Wait();
-                banchmark.ProcessDefensiveCacheDynamicProxy().Wait();
+                banchmark.ProcessDefensiveCacheMapping().Wait();
                 banchmark.ProcessDefensiveCacheImplemented().Wait();
             }
             else

@@ -62,7 +62,7 @@ namespace CoreApp.DefensiveCache.Extensions
             }
         }
 
-        public static void DecorateWithCacheGenerated<T>(
+        public static void DecorateWithCacheDynamicService<T>(
             this IServiceCollection services,
             Action<InterfaceCacheConfigurationTyped<T>> configure)
         {
