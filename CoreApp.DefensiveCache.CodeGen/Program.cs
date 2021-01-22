@@ -10,29 +10,45 @@ namespace ConsoleGenerator
 {
     class Program
     {
+        public const int ERROR = 1;
+        public const int SUCCESS = 0;
+
         static int Main(string[] args)
         {
-            Console.WriteLine("Hello World Console Generator!");
+            WriteAppName();
             if (args.Length == 0)
-                return 0;
+                return SUCCESS;
 
             var assemblyPath = args[0];
             var outputPath = args[1];
 
-            Console.WriteLine("ASSEMBLY __> " + assemblyPath);
-            Console.WriteLine("OUTPUTPATH __> " + outputPath);
+            Console.WriteLine("Assembly: " + assemblyPath);
+            Console.WriteLine("OutputPath: " + outputPath);
 
             var templates = TemplateService.GetCacheTemplatesFromAssembly(assemblyPath);
             if (!templates?.Any() ?? false)
             {
-                Console.WriteLine($"TB: Nothig template was found. -> '{assemblyPath}'");
-                return 0;
+                Console.WriteLine($"Nothig template was found.");
+                return ERROR;
             }
             else
-                Console.WriteLine($"TB: Was found {templates.Count()} templates.");
+                Console.WriteLine($"Was found {templates.Count()} templates.");
             
             var codeTemplate = TemplateService.GenerateCacheCode(templates.ToArray());
-            return WriteCodeTemplate(codeTemplate, outputPath) ? 0 : 1;
+            return WriteCodeTemplate(codeTemplate, outputPath) ? SUCCESS : ERROR;
+        }
+
+        private static void WriteAppName()
+        {
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Console.WriteLine(@$"");
+            Console.WriteLine(@$" ______      __               _            _____            _           ");
+            Console.WriteLine(@$" |  _  \    / _|             (_)          /  __ \          | |          ");
+            Console.WriteLine(@$" | | | |___| |_ ___ _ __  ___ ___   _____ | /  \/ __ _  ___| |__   ___  ");
+            Console.WriteLine(@$" | | | / _ \  _/ _ \ '_ \/ __| \ \ / / _ \| |    / _` |/ __| '_ \ / _ \ ");
+            Console.WriteLine(@$" | |/ /  __/ ||  __/ | | \__ \ |\ V /  __/| \__/\ (_| | (__| | | |  __/ ");
+            Console.WriteLine(@$" | _ / \___|_| \___|_| |_|___/_| \_/ \___| \___ /\__,_|\__ |_| |_|\___| V{version}");
+            Console.WriteLine(@$"");
         }
 
         private static bool WriteCodeTemplate(string codeTemplate, string outputPath)
@@ -44,11 +60,10 @@ namespace ConsoleGenerator
 
                 if (target.Exists)
                 {
-                    // Only try writing if the contents are different. Don't cause a rebuild
                     contents = File.ReadAllText(target.FullName, Encoding.UTF8).Trim();
                     if (string.Equals(contents, codeTemplate, StringComparison.Ordinal))
                     {
-                        Console.WriteLine($"'{outputPath}' exists!");
+                        Console.WriteLine($"File '{outputPath}' exists!");
                         return true;
                     }
                 }
@@ -63,34 +78,32 @@ namespace ConsoleGenerator
                 }
                 else
                 {
-                    var retryCount = 3;
-                    retry:
-                    FileStream file;
-
-                    try
+                    FileStream file = null;
+                    for (int retryCount = 3; retryCount >= 0; retryCount--)
                     {
-                        file = File.Open(target.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
-                    }
-                    catch (Exception)
-                    {
-                        if (retryCount < 0)
-                            throw;
-
-                        retryCount--;
-                        Thread.Sleep(500);
-                        goto retry;
+                        try
+                        {
+                            file = File.Open(target.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            Thread.Sleep(500);
+                            if (retryCount == 0)
+                                throw;
+                        }
                     }
 
                     using (var sw = new StreamWriter(file, Encoding.UTF8))
-                    {
                         sw.WriteLine(codeTemplate);
-                    }
+
+                    Console.WriteLine($"'{outputPath}' file successfully generated.");
                 }
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"GenerateStubsTask fail '{e.Message}'.");
+                Console.WriteLine($"Generate DefensiveCache fail '{e.Message}'.");
                 return false;
             }
         }

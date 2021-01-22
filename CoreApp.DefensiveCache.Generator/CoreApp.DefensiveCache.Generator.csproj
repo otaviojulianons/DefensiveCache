@@ -4,12 +4,16 @@
         <TargetFramework>netcoreapp3.0</TargetFramework>
 		<RootNamespace>CoreApp.DefensiveCache</RootNamespace>
 		<AssemblyName>CoreApp.DefensiveCache.Generator</AssemblyName>
+		<PackageProjectUrl>https://github.com/otaviojulianons/DefensiveCache</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>The automatic cache generation library for .NET Core</Description>
+		<TargetFramework>netcoreapp3.0</TargetFramework>		
 		<Authors>Otávio JNS</Authors>
 		<Company>CoreApp</Company>
 		<IsPackable>true</IsPackable>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<Version>1.0.0.25</Version>
+		<Version>1.0.0.0</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 

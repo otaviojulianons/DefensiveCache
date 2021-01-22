@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  defensivecache:
+    image: otaviojulianons/defensivecache-example:1.0
+    environment:
+      - ConnectionStrings__RedisConnection=redis:6379
+    ports:
+      - "5000:80"
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
