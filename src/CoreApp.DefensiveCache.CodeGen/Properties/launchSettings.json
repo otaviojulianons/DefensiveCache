@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CoreApp.DefensiveCache.CodeGen": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Projetos\\github\\DefensiveCache\\CoreApp.DefensiveCache.Example.API\\bin\\Debug\\netcoreapp3.1\\CoreApp.DefensiveCache.Example.API.dll GenerateFile.g.cs"
+    }
+  }
+}

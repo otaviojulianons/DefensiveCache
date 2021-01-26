@@ -1,0 +1,48 @@
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="CodeGenBuild">
+
+	<PropertyGroup>
+		<IntermediateOutputPath Condition="$(IntermediateOutputPath) == '' Or $(IntermediateOutputPath) == '*Undefined*'">$(MSBuildProjectDirectory)\obj\$(Configuration)\</IntermediateOutputPath>
+		<CodeGeneratedFile>$(IntermediateOutputPath)DefensiveCacheImplemented.g.cs</CodeGeneratedFile>
+		<OSArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</OSArchitecture>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OSArchitecture)' == 'X86'">
+		<Arch>x86</Arch>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(OSArchitecture)' == 'X64'">
+		<Arch>x64</Arch>
+	</PropertyGroup>
+	<PropertyGroup Condition="$(OSArchitecture.Contains('Arm'))">
+		<Arch>arm</Arch>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+		<OSArch>win-$(Arch)</OSArch>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOsPlatform('Linux'))">
+		<OSArch>linux-$(Arch)</OSArch>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOsPlatform('OSX'))">
+		<OSArch>osx-$(Arch)</OSArch>
+	</PropertyGroup>
+
+	<Target Name="CodeGenBuild" Condition="$(CodeGenBuildRun) == ''">
+		<MSBuild Projects="$(MSBuildProjectFile)" Properties="CodeGenBuildRun=true;">
+			<Output ItemName="ProjectOutputs" TaskParameter="TargetOutputs"/>
+		</MSBuild>
+		<PropertyGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+			<CodeGenCmd>$(MSBuildThisFileDirectory)portable\CoreApp.DefensiveCache.CodeGen.exe @(ProjectOutputs) $(CodeGeneratedFile)</CodeGenCmd>
+		</PropertyGroup>
+		<PropertyGroup Condition="$([MSBuild]::IsOsPlatform('OSX'))">
+			<CodeGenCmd>dotnet $(MSBuildThisFileDirectory)portable/CoreApp.DefensiveCache.CodeGen.dll @(ProjectOutputs) $(CodeGeneratedFile)</CodeGenCmd>
+		</PropertyGroup>
+		<PropertyGroup Condition="$([MSBuild]::IsOsPlatform('Linux'))">
+			<CodeGenCmd>dotnet $(MSBuildThisFileDirectory)$(OSArch)/CoreApp.DefensiveCache.CodeGen.dll @(ProjectOutputs) $(CodeGeneratedFile)</CodeGenCmd>
+		</PropertyGroup>
+		<Warning Text="DefensiveCache Before Build($(OSArch)) in @(ProjectOutputs)"/>
+		<Exec Command="$(CodeGenCmd)" />
+	</Target>
+	<Target Name="IncludeCodeGeneratedFile" BeforeTargets="BeforeCompile;CoreCompile">
+		<ItemGroup Condition="Exists('$(CodeGeneratedFile)')">
+			<Compile Include="$(CodeGeneratedFile)" />
+		</ItemGroup>
+	</Target>
+</Project>

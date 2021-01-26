@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CoreApp.DefensiveCache.Benchmark": {
+      "commandName": "Project",
+      "commandLineArgs": "run"
+    }
+  }
+}

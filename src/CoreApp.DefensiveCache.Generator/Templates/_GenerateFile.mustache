@@ -1,0 +1,92 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
+using CoreApp.DefensiveCache;
+using CoreApp.DefensiveCache.Serializers;
+using CoreApp.DefensiveCache.Extensions;
+using Microsoft.Extensions.Configuration;
+
+/********* Hey You! *********
+ *
+ * This is a generated file and is rewritten every time you build the project. Mappings are located in the ICacheServiceMapper.
+ * 
+ ****************************/
+
+namespace DynamicAssembly
+{
+{{#Services}}
+    public class {{Name}} : {{InterfaceName}}
+    {
+        private {{InterfaceName}} _repository;
+        private ICacheSerializer _cacheSerializer;
+        private IConfiguration _cacheConfiguration;
+
+        public {{Name}}(
+            {{InterfaceName}} repository, 
+            IConfiguration configuration,
+            ICacheSerializer cacheSerializer)
+        {
+            _repository = repository;
+            _cacheSerializer = cacheSerializer;
+            _cacheConfiguration = configuration.GetSection("Cache:Services:IProductRepository");
+        }
+
+{{#Methods}}
+{{#Enabled}}
+{{#Async}}
+
+        public async {{ReturnType}} {{Name}}({{ParametersDeclarations}})
+        {
+            var expiration{{Name}} = _cacheConfiguration.GetValue("{{Name}}:ExpirationSeconds", {{CacheExpirationSeconds}});
+            if (expiration{{Name}} == 0)
+                return await _repository.{{Name}}({{ParametersNames}});
+
+            var cacheKey = $"{{{CacheKeyTemplate}}}";
+            var cacheValue = await _cacheSerializer.GetAsync<{{ReturnTypeBase}}>(cacheKey);
+            if (Equals(cacheValue, default({{ReturnTypeBase}})))
+            {
+                cacheValue = await _repository.{{Name}}({{ParametersNames}});
+                _cacheSerializer.SetAsync(cacheKey, cacheValue, expiration{{Name}});
+            }
+            return cacheValue;
+        }
+{{/Async}}
+{{^Async}}
+
+        public {{ReturnType}} {{Name}}({{ParametersDeclarations}})
+        {
+            var expiration{{Name}} = _cacheConfiguration.GetValue("{{Name}}:ExpirationSeconds", {{CacheExpirationSeconds}});
+            if (expiration{{Name}} == 0)
+                return _repository.{{Name}}({{ParametersNames}});
+
+            var cacheKey = $"{{{CacheKeyTemplate}}}";
+            var cacheValue = _cacheSerializer.Get<{{ReturnType}}>(cacheKey);
+            if (Equals(cacheValue, default({{ReturnType}})))
+            {
+                cacheValue = _repository.{{Name}}({{ParametersNames}});
+                _cacheSerializer.Set(cacheKey, cacheValue, expiration{{Name}});
+            }
+            return cacheValue;
+        }
+{{/Async}}
+{{/Enabled}}
+{{^Enabled}}
+
+        public {{ReturnType}} {{Name}}({{ParametersDeclarations}})
+        {
+            return _repository.{{Name}}({{ParametersNames}});
+        }
+{{/Enabled}}
+{{^ReturnValue}}
+
+        public void {{Name}}({{ParametersDeclarations}})
+        {
+            _repository.{{Name}}({{ParametersNames}});
+        }
+{{/ReturnValue}}
+{{/Methods}}
+    }
+
+{{/Services}}
+}

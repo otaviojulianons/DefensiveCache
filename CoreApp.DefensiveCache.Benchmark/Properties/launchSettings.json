@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ConsoleTest": {
-      "commandName": "Project",
-      "commandLineArgs": "run"
-    }
-  }
-}

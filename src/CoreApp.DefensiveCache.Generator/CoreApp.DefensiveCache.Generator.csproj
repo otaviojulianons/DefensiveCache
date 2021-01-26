@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+		<RootNamespace>CoreApp.DefensiveCache</RootNamespace>
+		<AssemblyName>CoreApp.DefensiveCache.Generator</AssemblyName>
+		<PackageProjectUrl>https://github.com/otaviojulianons/DefensiveCache</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>The automatic cache generation library for .NET Core</Description>
+		<TargetFramework>netcoreapp3.0</TargetFramework>		
+		<Authors>Otávio JNS</Authors>
+		<Company>CoreApp</Company>
+		<IsPackable>true</IsPackable>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<Version>1.0.0.0</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\_CacheProxyTemplate.mustache" />
+    <None Remove="Templates\_GenerateFile.mustache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\_GenerateFile.mustache" />
+    <EmbeddedResource Include="Templates\_CacheProxyTemplate.mustache" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+	<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.4" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.3" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.3" />
+	<PackageReference Include="Stubble.Core" Version="1.8.4" />
+  </ItemGroup>
+
+
+</Project>
